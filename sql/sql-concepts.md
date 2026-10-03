@@ -6,7 +6,7 @@ select dept_name, max(salary) as max_salary
 from employee
 group by dept_name;
 
-Windows Function - 
+ ## Windows Function - 
 1) Aggregate Function:
 # Eg: Get the maximum salary of an employee from each department
 select
@@ -61,3 +61,20 @@ select
 lead(salary,2,0) over(partition by dept_name order by empid) as next_salary
 from employee e;
 
+
+## MySQL Date
+1) Current Date : CURDATE()
+
+2) Adding and Subtracting Time
+Select DATE_ADD(order_date, INTERVAL 7 DAY); -- Add 7 days
+Select DATE_SUB(order_date, INTERVAL 1 MONTH); -- Subtract 1 month
+
+3) Calculating the difference between Two Dates
+Select DATEDIFF('2026-02-04','2027-03-05');
+
+4) Extracting Parts of Date
+Select YEAR(order_date), MONTH(order_date), DAY(order_date)
+Select EXTRACT(YEAR from order_date)
+
+5) Custom Date Formatting
+select DATE_FORMAT(NOW(),'%W, %M %e, %Y') ---(e.g., Friday, October 2, 2026)

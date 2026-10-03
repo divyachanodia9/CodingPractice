@@ -3,3 +3,102 @@ select p.firstName, p.lastName, a.city, a.state
 from Person p
 left join Address a
 on p.personId = a.personId
+
+# Second Highest Salary
+select
+max(salary) as SecondHighestSalary 
+from Employee e
+where salary < (select max(salary) from Employee)
+
+# Nth Highest Salary
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  RETURN (
+      # Write your MySQL query statement below.
+        select distinct salary 
+        from (select e.*, dense_rank() over(order by salary desc) as rn
+        from Employee e) x
+        where x.rn = N
+  );
+END
+
+# RANK SCORES
+select
+s.score, DENSE_RANK() over(order by score desc) as 'rank'
+from Scores s
+
+# Consecutive Numbers
+select v.num as ConsecutiveNums from (
+select num, lag(num) over(order by id) as prev_num,
+lead(num) over(order by id) as next_num
+from Logs) v
+where v.num = v.prev_num and v.prev_num = v.next_num
+
+# Employees Earning More Than Their Managers
+select e.name as Employee
+from Employee e
+join Employee m
+on e.managerId = m.id
+where e.salary > m.salary
+
+# Duplicate Emails
+select e.email from ( 
+select email, count(*)
+from Person
+group by email
+having count(*) > 1) e
+
+# Customers who Never Order
+select c.name as Customers
+from Customers c
+left join Orders o
+on c.id = o.customerId
+where o.id is null
+
+#Department Highest Salary
+select Department,Employee, salary from (
+select d.name as Department, e.name as Employee, e.salary,
+rank() over(partition by d.id order by e.salary desc) as rnk
+from Employee e
+join Department d
+on e.departmentId = d.id) x
+where x.rnk = 1
+
+# Department Top 3 salaries
+select Department,Employee, salary from (
+select d.name as Department, e.name as Employee, e.salary,
+dense_rank() over(partition by d.id order by e.salary desc) as rnk
+from Employee e
+join Department d
+on e.departmentId = d.id) x
+where x.rnk < 4
+
+# Delete Duplicate Emails 
+DELETE FROM Person 
+where id in (
+    select id from (
+select
+id, email,
+row_number() over(partition by email order by id asc) as rnk
+from Person)x
+where x.rnk > 1)
+
+#Game Play Analysis I
+select x.player_id, x.event_date as first_login 
+from(
+select
+player_id, event_date, Row_Number() over(partition by player_id order by event_date asc) as rn
+from Activity a) x
+where x.rn = 1
+
+# Rising Temperature
+# Write your MySQL query statement below
+
+select id from (
+select id, recordDate,
+temperature,
+lag(recordDate) over(order by recordDate) AS prev_date,
+lag(temperature) over(order by recordDate) as prev_day_temp
+from Weather w) x
+where x.temperature > prev_day_temp
+and DATEDIFF(recordDate, prev_date) = 1
