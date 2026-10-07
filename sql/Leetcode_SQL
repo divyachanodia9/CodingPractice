@@ -146,3 +146,25 @@ cross join (select width from footer where width is not null order by id desc li
 
 #
 select min(id), min(name),min(country) from table1
+
+# Salary Report Generator
+with cte as (
+select Emp_id, emp_name, x.trans_type, round((base_salary * cast(x.percentage as decimal))/100,2) as amount 
+from Salary s
+cross join (select income as trans_type, percentage From Income
+union select deduction as trans_type, percentage from Deduction) x)
+
+-- building salary report
+
+select emp_name as employee, basic, allowance, others, (basic + allowance + others) as gross, Insurance, Health, House, (
+    Insurance + Health + House
+) as Total_Deduction, ((basic + allowance + others)  - (Insurance + Health + House)) as Total_Net
+from 
+(
+    select emp_name, trans_type, amount from cte
+) bq
+pivot
+(
+    sum(amount)
+    for trans_type in ([Allowance],[Basic],[Others],[Insurance],[Health],[House])
+)pq;
