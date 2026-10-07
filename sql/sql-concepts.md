@@ -78,3 +78,13 @@ Select EXTRACT(YEAR from order_date)
 
 5) Custom Date Formatting
 select DATE_FORMAT(NOW(),'%W, %M %e, %Y') ---(e.g., Friday, October 2, 2026)
+
+
+## Concat
+ 1) Select Concat(brand1, brand2, brand3) as paired_value
+
+## CASE
+1) Select Case when brand1 < brand2 then concat(brand1,brand2, brand3)
+                when brand1 > brand2 then concat(brand2,brand1, brand3)
+                else concat(brand1, brand2, brand3)
+                end as Column_name

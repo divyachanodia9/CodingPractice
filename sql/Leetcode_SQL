@@ -102,3 +102,5 @@ lag(temperature) over(order by recordDate) as prev_day_temp
 from Weather w) x
 where x.temperature > prev_day_temp
 and DATEDIFF(recordDate, prev_date) = 1
+
+# Remove Redundant Pairs
