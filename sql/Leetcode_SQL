@@ -104,3 +104,37 @@ where x.temperature > prev_day_temp
 and DATEDIFF(recordDate, prev_date) = 1
 
 # Remove Redundant Pairs
+with cte as (
+select *, case when brand1 > brand2 then concat(brand1,brand2,year) as pair_id
+            when brand2 > brand1 then concat(brand2,brand1, year) as pair_id
+from brands),
+cte_rn as (
+    select *, row_number() over(partition by pair_id order by pair_id) as rnk
+    from cte
+)
+select
+from cte_rn
+where rnk = 1
+or (custom1 <> custom3 and custom 4 <> custom2)
+
+# Mountain Huts and Trails
+with cte_start as (select t.hut1 as start_hut, h.name as start_h_name, h.altitude as start_altitude, t.hut2 as end_hut
+ from mountain_huts h
+ join trails t
+ on t.hut1 = h.id),
+ cte_end as (select c.*, hh.name as end_h_name, hh.altitude as end_altitude,
+ case when start_altitude > hh.altitude then 1 else 0 end as altitude_flag
+ from cte_start c
+ join mountain_huts hh
+ on t.hut2 = hh.id)
+ cte_final as (
+ select  case when altitude_flag = 1 then start_hut else end_hut end as start_hut,
+ case when altitude_flag = 1 then start_h_name else end_h_name end as start_h_name,
+ case when altitude_flag = 1 then end_hut else start_hut end as end_hut,
+ case when altitude_flag = 1 then end_h_name else start_h_name end as end_h_name,
+ from cte_end)
+ select c1.start_hut as shut, c1.end_hut as mhut, c2.end_hut as lhut
+ from cte_final c1
+ join cte_final c2
+ on c1.end_hut = c2.start_hut
+
