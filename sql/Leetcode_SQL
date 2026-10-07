@@ -138,3 +138,11 @@ with cte_start as (select t.hut1 as start_hut, h.name as start_h_name, h.altitud
  join cte_final c2
  on c1.end_hut = c2.start_hut
 
+# Footer Values
+select * from (select car from footer where car is not null order by id desc limit 1) car
+cross join (select length from footer where length is not null order by id desc limit 1) length
+cross join (slect height from footer where height is not null order by id desc limit 1) height
+cross join (select width from footer where width is not null order by id desc limit 1) width
+
+#
+select min(id), min(name),min(country) from table1
