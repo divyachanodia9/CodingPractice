@@ -168,3 +168,31 @@ pivot
     sum(amount)
     for trans_type in ([Allowance],[Basic],[Others],[Insurance],[Health],[House])
 )pq;
+
+
+# Student Performance
+
+select test_id, marks from (
+select Test_id, marks, LAG(marks,1,marks) over(order by test_id) as prev_marks
+from student) x
+where x.marks > x.prev_marks
+
+# Find Relevant Dates
+
+with cte as (
+select *, row_number() over(partition by product_id order by dates) as dow
+from day_indicator),
+cte1 as (
+select *, case when substring(day_indicator,dow, 1) = '1' then 'Include' else 'Exclude' end as flag
+from cte)
+select product_id, day_indicator, Dates
+from cte1
+where flag ='Include'
+
+
+# Add missing Values
+with cte as (
+select *, sum(case when job_role is null then 0 else 1 end) over(order by row_id) as segment
+from job_skills)
+select row_id, first_value(job_role) over(partition by segment order by row_id) as job_role, skills
+from cte;
