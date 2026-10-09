@@ -196,3 +196,29 @@ select *, sum(case when job_role is null then 0 else 1 end) over(order by row_id
 from job_skills)
 select row_id, first_value(job_role) over(partition by segment order by row_id) as job_role, skills
 from cte;
+
+# Merge Products
+
+select dates, cast(product_id as varchar) as products
+from Orders
+union 
+select dates, string_agg(cast(product_id as varchar), ',') as products
+from orders
+group by customer_id, dates
+order by dates, products
+
+# Auto Repair
+
+select * 
+(
+select v.value as velocity, l.value as level
+from auto_repair l
+join auto_repair v
+on l.client = v.client and l.auto=v.auto and l.repair_date = v.repair_date
+where l.indicator = 'level'
+and l.indicator = 'velocity') bq
+pivot
+(
+    count(level)
+    for level in ([good],[wrong],[regular])
+) pq;
