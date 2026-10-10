@@ -222,3 +222,20 @@ pivot
     count(level)
     for level in ([good],[wrong],[regular])
 ) pq;
+
+
+# Now few questions from Exponenet Prep Interview:
+## Upsell campaigns
+
+select AVG(EXTRACT(EPOCH FROM (date_end - date_start)) / 86400) as average_duration_days  -- with the help of EPOCH it got converted to seconds and after dividing it with 86400 it became hours
+from campaign c
+
+
+select c.upsell_campaign_id, COUNT(distinct u.user_id) as eligible_users_with_purchase
+from campaign c
+join "transaction" t
+on t.transaction_date between c.date_start and c.date_end
+join "user" u
+on t.user_id = u.user_id
+where u.is_eligible_for_upsell_campaign = TRUE
+group by c.upsell_campaign_id
