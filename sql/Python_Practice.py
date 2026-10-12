@@ -40,4 +40,53 @@ print(if total == n)
 # SC : O(1)
 
 ## Print all factors of a Given Number 10 - [1,2,5,10]
+# 1) Brute - Better Solution
+num = n
+result = []
+for i in range(1,num//2):
+    if num % i == 0:
+        result.append(i)
+result.append(num)
+print(result)
+
+# TC : O(N/2) ~ O(N)
+# SC : O(k) - k is the number of factor
+
+# 2) Optimal Solution
+from math import sqrt
+num = n
+result = []
+for i in range(1, int(sqrt(num)) + 1):
+    if num % i == 0:
+        result.append(i)
+        if num // i != i:
+            result.append(num//i)
+    result.sort()  ## TC: O(NlogN)
+print(result)
+
+# TC : O(sqrt(N)) + O(NlogN)
+# SC : O(k)  - k is the number of factor 
+
+
+## Frequency Map / Dictionary
+nums = [5,6,7,7,7,1,111,1,3,9,1,1,3]
+
+#Method 1:
+freq_map = {}
+for i in range(0, len(nums)):
+    if nums[i] in freq_map:
+        freq_map[nums[i]] += 1
+    else:
+        freq_map[nums[i]] = 1
+# TC : O(N) - for loop
+# SC : O(N)
+
+#Method 2:
+d = {}
+n = len(nums)
+for i in range(0,n):
+    d[nums[i]] = d.get(nums[i],0) + 1
+
+# TC : O(N) - for loop
+# SC : O(N)
 

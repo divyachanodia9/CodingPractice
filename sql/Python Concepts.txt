@@ -8,3 +8,5 @@ Different types of TC:
 1) Big-Oh O(n) - wrost case
 2) Theta - Average case
 3) Omega - Best case
+
+
