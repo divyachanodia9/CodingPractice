@@ -1,0 +1,10 @@
+## Time Complexity: Rate of increase in time with respect to input size.
+Rules of Time Complexity -
+1) Always calculate TC in terms of wrost case.
+2) Avoid constant values.   TC: O(8N2 + 3N2 + 15) -- Avoid 15
+3) Avoid Lower bounds     
+
+Different types of TC:
+1) Big-Oh O(n) - wrost case
+2) Theta - Average case
+3) Omega - Best case
