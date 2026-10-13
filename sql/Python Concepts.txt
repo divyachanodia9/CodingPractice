@@ -23,3 +23,8 @@ for num in m:
         print(0)
     else:
         print(hash_list[num])
+
+# TC : O(N +M)
+# SC : O(11) ~ O(1)
+
+## Character Hashing

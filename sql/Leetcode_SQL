@@ -239,3 +239,103 @@ join "user" u
 on t.user_id = u.user_id
 where u.is_eligible_for_upsell_campaign = TRUE
 group by c.upsell_campaign_id
+
+
+## Comments Histogram
+
+-- Write your query here
+--1
+select
+ case when age >= 0 and age < 19 then '0-18' 
+      when age >= 19 and age < 26 then '19-25' 
+      when age >= 26 and age < 36 then '26-35' 
+      when age >= 36 and age < 46 then '36-45' 
+      when age >= 46 and age < 61 then '46-60'
+      else '60+' end as age_segment,
+      ROUND(COUNT(c.comment_id)*1.0/COUNT(DISTINCT p.person_id),2) as avg_comments_per_person 
+from persons p 
+join comments c 
+on p.person_id = c.person_id
+group by age_segment
+order by avg_comments_per_person desc;
+
+--2
+
+select p.page_type, ROUND(AVG(page_views),2) as average
+from posts p 
+group by p.page_type
+order by average desc
+
+--3
+with monthlycomment as (
+select
+ case when age between 0 and 18 then '0-18'
+      when age between 19 and 25 then '19-25'
+      when age between 26 and 35 then '26-35'
+      when age between 36 and 45 then '36-45'
+      when age between 46 and 60 then '46-60'
+      else '60+' end as age_segment,
+      TO_CHAR(c.date,'YYYY-MM') as month,
+      count(c.comment_id) as total_comments
+from persons p 
+join comments c 
+on p.person_id = c.person_id
+where Extract(year from c.date) = '2023'
+group by age_segment, month),
+ranked as (
+select age_segment, month, total_comments, row_number() over(partition by month order by total_comments desc) as rw
+from monthlycomment m)
+
+select age_segment, month, total_comments
+from ranked
+where rw < 3
+
+--4 
+--top 8 most viewed posts
+
+with top_comments as (
+select p.person_id, p.first_name, p.last_name, count(comment_id) as total_comments
+from persons p
+join comments c
+on c.person_id = p.person_id
+where c.post_id in (select post_id
+from posts p
+order by page_views desc
+limit 8)
+group by 1,2,3
+order by total_comments desc)
+
+select person_id, first_name,last_name, total_comments
+from top_comments t
+order by total_comments desc
+limit 3
+
+--5
+-- --person first comment on a post
+with first_comment as (
+select person_id, post_id, 
+FIRST_VALUE(comment_id) over(partition by person_id, post_id order by date) as first_comment, 
+extract(year from c.date) as year_posted
+from comments c),
+noofcomment as (
+select person_id, year_posted, count(first_comment) as nof_comments_year
+from first_comment
+group by person_id, year_posted
+order by person_id),
+yearoveryear as (
+select noc.person_id, p.first_name, p.last_name,
+MAX(case when year_posted = '2023' then nof_comments_year else 0 end) as prev_year_cnt,
+MAX(case when year_posted = '2024' then nof_comments_year else 0 end) as next_year_cnt
+from noofcomment noc
+join persons p
+on noc.person_id = p.person_id
+group by noc.person_id, p.first_name, p.last_name)
+
+select person_id, first_name, last_name, next_year_cnt - prev_year_cnt as year_over_year_increase
+from yearoveryear
+order by year_over_year_increase desc
+limit 3
+
+
+
+
