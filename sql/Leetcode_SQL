@@ -337,5 +337,23 @@ order by year_over_year_increase desc
 limit 3
 
 
+-- SQL Question 1: First 14-Day Satisfaction
+with customerenrolledinjune as (
+select customer_id, signup_timestamp
+from customers
+where Extract(year from signup_timestamp) = '2022'
+ and Extract(month from signup_timestamp) = 6),
+category as (
+ select c.customer_id, o.order_id,
+ case when o.status in ('completed incorrectly', 'never received') OR t.actual_delivery_timestamp > t.estimated_delivery_timestamp
+  then 'bad' else 'good' end as first14dayexperience
+ from customerenrolledinjune c
+ join orders o 
+ on c.customer_id = o.customer_id
+ join trips t
+ on o.trip_id = t.trip_id
+ where o.order_timestamp >= c.signup_timestamp
+      AND o.order_timestamp < c.signup_timestamp + INTERVAL '14 days')
 
-
+ select round(100.0 * SUM(case when first14dayexperience = ' bad' then 1 else 0 end)/ count(distinct order_id, 2)) as bad_experience_pct
+ from category
