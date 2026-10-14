@@ -357,3 +357,19 @@ category as (
 
  select round(100.0 * SUM(case when first14dayexperience = ' bad' then 1 else 0 end)/ count(distinct order_id, 2)) as bad_experience_pct
  from category
+
+
+ --SQL Question 2: Analyze Doordash Delivery Performance
+with avg_per_driver_per_day as (
+ select driver_id, 
+ extract(date from delivery_start_time) as day_date, 
+AVG(EXTRACT(EPOCH FROM (delivery_end_time - delivery_start_time))/60) 
+        OVER (PARTITION BY driver_id, DATE(delivery_start_time)) as avg_delivery_duration
+ from deliveries d)
+
+ select driver_id, 
+ day_date, avg_delivery_duration,
+ RANK() over(partition by driver_id order by avg_delivery_duration) as rank_d,
+ AVG(avg_delivery_duration) over(partition by driver_id) as overall_avg_delivery_duration
+ from avg_per_driver_per_day
+
