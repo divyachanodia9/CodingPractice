@@ -88,3 +88,63 @@ select DATE_FORMAT(NOW(),'%W, %M %e, %Y') ---(e.g., Friday, October 2, 2026)
                 when brand1 > brand2 then concat(brand2,brand1, brand3)
                 else concat(brand1, brand2, brand3)
                 end as Column_name
+
+
+## OFFSET : It is not good as the query will run completely and just before it returns the output it will remove those many rows
+It will remove the first N records
+
+For Eg: Problem Return the Nth highest value without using subquery or windows function
+-- Find the 2nd highest Amount
+select
+from orders
+order by amount desc
+limit 1 offset 1; -- It will eliminate the 1st record with the help of OFFSET and return the record from th elist based on the limit.
+
+## DISTINCT ON : Return one row per group without windows function
+
+For Eg: Find the latest order for each customer
+select distinct on (customer_name)
+from orders
+order by customer_name, order_date desc
+
+## RETURNING : Return the Modified data from DML operation
+
+For Eg: Return the modified records
+
+BEGIN;  -- Use BEGIN, so your transaction doesn't autocommit, the changes does not get save dto the databse directly, I have an option to rollback if I want later.
+
+UPDATE orders
+SET category = 'Premium Electronics'
+WHERE category = 'Electronics' AND amount > 150
+RETURNING order_id, customer_name, amount
+
+ROLLBACK;
+
+## Range Overlap with && and daterange function : Overlap function detects overlapping dates in ONE operator
+
+For Eg: The manager needs to know if any two salespeople have overlapping approved leave, because someone always has to  be covering the floor
+
+SELECT 
+    a.salesperson as salesperson_1, a.leave_start as start_1, a.leave_end as end_1,
+    b.salesperson as salesperson_2, a.leave_start as start_2, a.leave_end as end_2
+from staff_leave a
+join staff_leave b
+on a.leave_id < b.leave_id
+AND a.salesperson <> b.salesperson
+AND daterange(a.leave_start, a.leave_end,'[]') && daterange(b.leave_start, b.leave_end,'[]')
+ORDER BY a.leave_start
+
+
+## GENERATE_SERIES : Find gaps using GENERATE_SERIES(start, stop, step)
+
+For Eg: Return days with no data
+
+with cte_date_range as (
+    SELECT generate_series('2026-01-01'::date, '2026-01-31'::date, '1 day':: interval)::date as calender_date
+)
+select ds.calender_date
+from cte_date_range ds
+left join orders o
+on o.order_date = ds.calender_date
+where o.order_id is null
+order by ds.calender_date;

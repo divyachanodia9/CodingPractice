@@ -373,3 +373,4 @@ AVG(EXTRACT(EPOCH FROM (delivery_end_time - delivery_start_time))/60)
  AVG(avg_delivery_duration) over(partition by driver_id) as overall_avg_delivery_duration
  from avg_per_driver_per_day
 
+
