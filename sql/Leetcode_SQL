@@ -374,3 +374,32 @@ AVG(EXTRACT(EPOCH FROM (delivery_end_time - delivery_start_time))/60)
  from avg_per_driver_per_day
 
 
+-- SQL Question 3: Restaurant Performance Analysis
+
+select restaurant_id, count(order_id) as order_cnt
+from restaurants r
+join order o 
+on r.restaurant_id = o.restaurant_id
+where o.order_date >= NOW() - INTERVAL '1 month'
+group by restaurant_id 
+order by order_cnt desc
+limit 5;
+
+-- SQL Question 4: Average  Delivery Time per Restaurant
+
+select restaurant_id, AVG(EPOCH from (delivery_time - order_time)/60) as avg_delivery_time_in_minutes
+from orders
+group by restaurant_id
+
+
+-- SQL Question 5: Calculating Courier Average Distance and Total Revenue
+
+select
+courier_id,
+ROUND(AVG(end_point - start_point),2) as average_distance,
+SUm(case when (end_point - start_point) > delivery_fee then (end_point - start_point) * quantity
+    Else delivery_fee * quantity end) as total_revenue
+     from deliveries
+where date >= (current_date - INTERVAl '1 month')
+group by courier_id
+ 
