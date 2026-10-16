@@ -148,3 +148,24 @@ left join orders o
 on o.order_date = ds.calender_date
 where o.order_id is null
 order by ds.calender_date;
+
+
+## 7 tricks to write SQL code:
+1) Write clean and formated SQL Code
+Eg: 
+SELECT 
+    o.order_id
+FROM order o
+
+2) Fetch only what you need
+3) Use CTE's to break down complex logic
+4) Write index-friendly predicates
+If you want to use your index column in where clause try not to enclose it within a function, otherwise SQL optimizer may not be able to use that column as index
+
+Eg:
+SELECT
+    o.order_id,
+    customer_id
+FROm orders
+WHERE DATE(order_date)  = DATE '2025-01-01';
+--WHERE order_date = DATE '2025-01-01';  -- correct
