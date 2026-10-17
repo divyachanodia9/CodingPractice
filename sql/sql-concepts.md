@@ -169,3 +169,4 @@ SELECT
 FROm orders
 WHERE DATE(order_date)  = DATE '2025-01-01';
 --WHERE order_date = DATE '2025-01-01';  -- correct
+5) Use DISTINCT properly, do not use it to cover bad queries

@@ -84,9 +84,14 @@ for i in range(0, len(nums)):
 #Method 2:
 d = {}
 n = len(nums)
-for i in range(0,n):
+for i in range(0,n):    
     d[nums[i]] = d.get(nums[i],0) + 1
 
 # TC : O(N) - for loop
 # SC : O(N)
 
+
+## Leetcode : Remove Duplicates from Sorted Array
+
+class Solution:
+    def removeDuplicates()
