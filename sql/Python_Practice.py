@@ -91,7 +91,21 @@ for i in range(0,n):
 # SC : O(N)
 
 
-## Leetcode : Remove Duplicates from Sorted Array
+## Arrays and Hashing
+# 1) Two Sum :
 
 class Solution:
-    def removeDuplicates()
+    def two_sum(nums,target):
+        hash_map = {}
+
+        for i in range(len(nums)):
+            k = target - hash_map[nums[i]]
+            if k in hash_map:
+                return [hash_map[k], i]
+            else:
+                hash_map[nums[i]] = 1
+
+# 2) Valid Anagram:
+class Solution:
+    def isAnagram(s,t):
+        
