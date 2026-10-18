@@ -105,7 +105,78 @@ class Solution:
             else:
                 hash_map[nums[i]] = 1
 
-# 2) Valid Anagram:
+# 2) Valid Anagram: TC - O(n + n) ~ O(2n), SC: O(26)
 class Solution:
     def isAnagram(s,t):
-        
+        if len(s) != len(t):
+            return False
+
+        d = {}
+
+        for ch in s:
+            d[ch] = d.get(ch,0) + 1
+        for ch in t:
+            if ch not in d:
+                return False
+            if d[ch] == 0:
+                return False
+            d[ch] -= 1
+        return True
+
+# 3) Group Anagram 
+# input : strs = ["eat","tea","tan","ate","nat","bat"]
+class Solution:
+    def grpAnagrams(strs):
+        d = defaultdict(list)
+        for word in words:
+            sorted_word = "".json(sorted(word))
+            d[sorted_word].append(word)
+        return list(d.values())
+
+# 4) Top K frequent Elements
+# input : [1,2,1,2,1,2,3,1,3,2], k = 2
+class Solution:
+    def topKfrequent(nums, k):
+        freq = {}
+        for num in nums:
+            if num in freq:
+                freq[num] += 1
+            else:
+                freq[num] = 1
+    maxi = float('-inf')
+    new_freq = {}
+    for k,v in freq.items():
+        maxi = max(maxi,v)
+        if v not in new_freq:
+            new_freq[v] = [k]
+        else:
+            new_freq[v].append(k)        
+
+    i = maxi
+    output =[]
+    while i > 0:
+        if i in new_freq:
+            output.extend(new_freq[i])
+            if len(output) == k:
+                return output
+        i -= 1
+
+
+# 5) Product of Array Except Self
+# input : nums = [-1,1,0,-3,3]
+class Solution:
+    def productExceptSelf(nums):
+        ls = [1] * len(nums) 
+        rs = [1] * len(nums)
+        f = [1] * len(nums)
+
+        for i in range(1,len(nums)):
+            ls[i] = ls[i-1] * nums[i-1]
+
+        for j in range(len(nums)-2,-1,-1):
+            rs[j] = rs[j+1] * nums[j+1]
+
+        for k in range(len(nums)):
+            f[k] = ls[k] * rs[k]
+
+        return f
