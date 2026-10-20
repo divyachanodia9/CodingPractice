@@ -403,3 +403,11 @@ SUm(case when (end_point - start_point) > delivery_fee then (end_point - start_p
 where date >= (current_date - INTERVAl '1 month')
 group by courier_id
  
+
+## Stratascratch 
+## Average cost during rush hours
+
+select AVG(order_total),EXTRACT(hour from customer_placed_order_datetime) as hr
+from doordash_delivery d
+where Extract(hour from customer_placed_order_datetime) in (15,16,17)
+group by hr 

@@ -180,3 +180,33 @@ class Solution:
             f[k] = ls[k] * rs[k]
 
         return f
+
+# 6) Longest Consecutive Sequence:
+# Input : nums = [0,3,7,2,5,8,4,6,0,1]
+if len(nums) == 0:
+    return 0
+if len(nums) == 1:
+    return 1
+ 
+s = set()
+
+for i in range(len(nums)):
+    if nums[i] not in s:
+        s.add(nums[i])
+
+longest = 0
+count = 0
+
+for num in s:
+    if num - 1 not in s:
+        count = 1
+        while num + 1 in s:
+            count += 1
+            num = num + 1
+        longest = max(longest, count)
+    return longest
+
+
+# 7) Longest Substring Without Repeating Characters
+# Input : s = "abcabcbb"
+
